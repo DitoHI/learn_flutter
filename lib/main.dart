@@ -1,59 +1,118 @@
-import 'package:flutter/material.dart';
+import "package:flutter/material.dart";
 
 void main() {
   runApp(MaterialApp(
-    title: "Stateful App Example",
-    home: FavoriteCity(),
+    title: "",
+    home: SIForm(),
   ));
 }
 
-class FavoriteCity extends StatefulWidget {
+class SIForm extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return _FavoriteCityState();
+    return _SIFormState();
   }
 }
 
-class _FavoriteCityState extends State<FavoriteCity> {
-  String nameCity = "";
-  var _currencies = ["rupees", "dollar", "yuan"];
-  String __currentSelected = "dollar";
+class _SIFormState extends State<SIForm> {
+  List<String> _currencies = ["rupees", "dollars", "pounds"];
+  String _currencySelected;
+  final double _minimumPadding = 5.0;
 
   @override
   Widget build(BuildContext context) {
+    this._currencySelected = this._currencies[0];
     return Scaffold(
       appBar: AppBar(
-        title: Text("Stateful Example"),
+        title: Text("Simple Interest App"),
       ),
       body: Container(
-        margin: EdgeInsets.all(20.0),
-        child: Column(
+        padding: EdgeInsets.all(this._minimumPadding * 2),
+        child: ListView(
           children: <Widget>[
-            DropdownButton<String>(
-              items: _currencies.map((currency) {
-                return DropdownMenuItem<String>(
-                  value: currency,
-                  child: Text(currency),
-                );
-              }).toList(),
-              onChanged: (String newValueSelected) {
-                this._onDropdownSelected(newValueSelected);
-              },
-              value: this.__currentSelected,
-            ),
-            TextField(
-              onSubmitted: (String userInput) {
-                setState(() {
-                  this.nameCity = userInput;
-                });
-              },
+            this.getImageAsset(),
+            Padding(
+              padding: EdgeInsets.only(
+                  top: this._minimumPadding, bottom: this._minimumPadding),
+              child: TextField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Principal",
+                  hintText: "Enter Principal e.g. 12000",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(this._minimumPadding),
+                  ),
+                ),
+              ),
             ),
             Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                "The best city is $nameCity",
-                style: TextStyle(fontSize: 20.0),
+              padding: EdgeInsets.only(
+                  top: this._minimumPadding, bottom: this._minimumPadding),
+              child: TextField(
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  labelText: "Rate Interest",
+                  hintText: "In percent",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(this._minimumPadding),
+                  ),
+                ),
               ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                  top: this._minimumPadding, bottom: this._minimumPadding),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                        labelText: "Terms",
+                        hintText: "In year",
+                        border: OutlineInputBorder(
+                          borderRadius:
+                              BorderRadius.circular(this._minimumPadding),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    width: this._minimumPadding * 5,
+                  ),
+                  Expanded(
+                      child: DropdownButton<String>(
+                    items: this._currencies.map((currency) {
+                      return DropdownMenuItem<String>(
+                        child: Text(currency),
+                        value: currency,
+                      );
+                    }).toList(),
+                    onChanged: (String onValueChanged) {},
+                    value: this._currencySelected,
+                  ))
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                  top: this._minimumPadding, bottom: this._minimumPadding),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: RaisedButton(
+                        child: Text("Calculate"), onPressed: () {}),
+                  ),
+                  Expanded(
+                    child: RaisedButton(
+                        child: Text("Reset"), onPressed: () {}),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(this._minimumPadding * 2),
+              child: Text("ToDo Text"),
             )
           ],
         ),
@@ -61,9 +120,16 @@ class _FavoriteCityState extends State<FavoriteCity> {
     );
   }
 
-  void _onDropdownSelected(String valueSelected) {
-    setState(() {
-      this.__currentSelected = valueSelected;
-    });
+  Widget getImageAsset() {
+    AssetImage assetImage = AssetImage('images/currency-icon.png');
+    Image image = Image(
+      image: assetImage,
+      height: 250.0,
+    );
+
+    return Container(
+      child: image,
+      padding: EdgeInsets.all(this._minimumPadding * 5),
+    );
   }
 }
