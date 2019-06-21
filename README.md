@@ -20,13 +20,13 @@ Check out in each `branch` to see the whole projects:
 
 <div style="display:flex;flex-flow:row-wrap;">
 
+##### 1. Simple Interest Calculator
+
 <img src="https://user-images.githubusercontent.com/16315641/59941355-33ad4500-9487-11e9-8867-7d0c14ffb2bd.png" width="200" height="100%"/>
 
 <img src="https://user-images.githubusercontent.com/16315641/59941363-3871f900-9487-11e9-899b-41b13c46eef7.png" width="200" height="100%"/>
 
-<div style="font-weight: 800; text-align: center;">1. Calculator App</div>
-
-</ br>
+##### 2. NoteKeeper
 
 <img src="https://user-images.githubusercontent.com/16315641/59941506-8be44700-9487-11e9-8577-bec5ffa00287.png" width="200" height="100%"/>
 
@@ -37,8 +37,6 @@ Check out in each `branch` to see the whole projects:
 <img src="https://user-images.githubusercontent.com/16315641/59941513-8edf3780-9487-11e9-8525-e31a9fa27342.png" width="200" height="100%"/>
 
 <img src="https://user-images.githubusercontent.com/16315641/59941515-90106480-9487-11e9-8361-343c6c487847.png" width="200" height="100%"/>
-
-<div style="font-weight: 800; text-align: center;">2. NoteKeeper App</div>
 
 </div>
 
