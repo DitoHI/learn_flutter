@@ -19,6 +19,8 @@ class SIForm extends StatefulWidget {
 }
 
 class _SIFormState extends State<SIForm> {
+  var _formKey = GlobalKey<FormState>();
+
   List<String> _currencies = ["Rupees", "Dollars", "Pounds"];
   String _currencySelected = "";
   final double _minimumPadding = 5.0;
@@ -43,129 +45,160 @@ class _SIFormState extends State<SIForm> {
       appBar: AppBar(
         title: Text("Simple Interest App"),
       ),
-      body: Container(
-        padding: EdgeInsets.all(this._minimumPadding * 2),
-        child: ListView(
-          children: <Widget>[
-            this.getImageAsset(),
-            Padding(
-              padding: EdgeInsets.only(
-                  top: this._minimumPadding, bottom: this._minimumPadding),
-              child: TextField(
-                controller: principalController,
-                keyboardType: TextInputType.number,
-                style: textStyle,
-                decoration: InputDecoration(
-                  labelText: "Principal",
-                  labelStyle: textStyle,
-                  hintText: "Enter Principal e.g. 12000",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(this._minimumPadding),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  top: this._minimumPadding, bottom: this._minimumPadding),
-              child: TextField(
-                controller: roiController,
-                keyboardType: TextInputType.number,
-                style: textStyle,
-                decoration: InputDecoration(
-                  labelText: "Rate Interest",
-                  labelStyle: textStyle,
-                  hintText: "In percent",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(this._minimumPadding),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  top: this._minimumPadding, bottom: this._minimumPadding),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: TextField(
-                      controller: termController,
-                      keyboardType: TextInputType.number,
-                      style: textStyle,
-                      decoration: InputDecoration(
-                        labelText: "Terms",
-                        labelStyle: textStyle,
-                        hintText: "In year",
-                        border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(this._minimumPadding),
-                        ),
+      body: Form(
+          key: _formKey,
+          child: Padding(
+            padding: EdgeInsets.all(this._minimumPadding * 5),
+            child: ListView(
+              children: <Widget>[
+                this.getImageAsset(),
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: this._minimumPadding, bottom: this._minimumPadding),
+                  child: TextFormField(
+                    controller: principalController,
+                    keyboardType: TextInputType.number,
+                    style: textStyle,
+                    validator: (String valueInput) {
+                      if (valueInput.isEmpty) {
+                        return "Please enter the Principal value";
+                      }
+                    },
+                    decoration: InputDecoration(
+                      labelText: "Principal",
+                      labelStyle: textStyle,
+                      hintText: "Enter Principal e.g. 12000",
+                      errorStyle:
+                          TextStyle(color: Colors.yellowAccent, fontSize: 15.0),
+                      border: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(this._minimumPadding),
                       ),
                     ),
                   ),
-                  Container(
-                    width: this._minimumPadding * 5,
-                  ),
-                  Expanded(
-                      child: DropdownButton<String>(
-                    items: this._currencies.map((currency) {
-                      return DropdownMenuItem<String>(
-                        child: Text(currency),
-                        value: currency,
-                      );
-                    }).toList(),
-                    onChanged: (String onValueChanged) {
-                      _onDropdownItemSelected(onValueChanged);
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: this._minimumPadding, bottom: this._minimumPadding),
+                  child: TextFormField(
+                    controller: roiController,
+                    keyboardType: TextInputType.number,
+                    style: textStyle,
+                    validator: (String newValue) {
+                      if (newValue.isEmpty) {
+                        return "Please enter the ROI value";
+                      }
                     },
-                    value: this._currencySelected,
-                  ))
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.only(
-                  top: this._minimumPadding, bottom: this._minimumPadding),
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    child: RaisedButton(
-                        color: Theme.of(context).accentColor,
-                        textColor: Theme.of(context).primaryColorDark,
-                        child: Text(
-                          "Calculate",
-                          textScaleFactor: 1.5,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            this.displayResult = this._calculatePayment();
-                          });
-                        }),
+                    decoration: InputDecoration(
+                      labelText: "Rate Interest",
+                      labelStyle: textStyle,
+                      hintText: "In percent",
+                      errorStyle: TextStyle(
+                        color: Colors.yellowAccent,
+                        fontSize: 15.0,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius:
+                            BorderRadius.circular(this._minimumPadding),
+                      ),
+                    ),
                   ),
-                  Expanded(
-                    child: RaisedButton(
-                        color: Theme.of(context).primaryColorDark,
-                        textColor: Theme.of(context).primaryColorLight,
-                        child: Text(
-                          "Reset",
-                          textScaleFactor: 1.5,
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: this._minimumPadding, bottom: this._minimumPadding),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: TextFormField(
+                          controller: termController,
+                          keyboardType: TextInputType.number,
+                          style: textStyle,
+                          validator: (String newValue) {
+                            if (newValue.isEmpty) {
+                              return "Please enter terms";
+                            }
+                          },
+                          decoration: InputDecoration(
+                            labelText: "Terms",
+                            labelStyle: textStyle,
+                            hintText: "In year",
+                            errorStyle: TextStyle(
+                              color: Colors.yellowAccent,
+                              fontSize: 15.0,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius:
+                                  BorderRadius.circular(this._minimumPadding),
+                            ),
+                          ),
                         ),
-                        onPressed: () {
-                          this._reset();
-                        }),
+                      ),
+                      Container(
+                        width: this._minimumPadding * 5,
+                      ),
+                      Expanded(
+                          child: DropdownButton<String>(
+                        items: this._currencies.map((currency) {
+                          return DropdownMenuItem<String>(
+                            child: Text(currency),
+                            value: currency,
+                          );
+                        }).toList(),
+                        onChanged: (String onValueChanged) {
+                          _onDropdownItemSelected(onValueChanged);
+                        },
+                        value: this._currencySelected,
+                      ))
+                    ],
                   ),
-                ],
-              ),
+                ),
+                Padding(
+                  padding: EdgeInsets.only(
+                      top: this._minimumPadding, bottom: this._minimumPadding),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: RaisedButton(
+                            color: Theme.of(context).accentColor,
+                            textColor: Theme.of(context).primaryColorDark,
+                            child: Text(
+                              "Calculate",
+                              textScaleFactor: 1.5,
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                if (this._formKey.currentState.validate()) {
+                                  this.displayResult = this._calculatePayment();
+                                }
+                              });
+                            }),
+                      ),
+                      Expanded(
+                        child: RaisedButton(
+                            color: Theme.of(context).primaryColorDark,
+                            textColor: Theme.of(context).primaryColorLight,
+                            child: Text(
+                              "Reset",
+                              textScaleFactor: 1.5,
+                            ),
+                            onPressed: () {
+                              this._reset();
+                            }),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(this._minimumPadding * 2),
+                  child: Text(
+                    this.displayResult,
+                    style: textStyle,
+                  ),
+                )
+              ],
             ),
-            Padding(
-              padding: EdgeInsets.all(this._minimumPadding * 2),
-              child: Text(
-                this.displayResult,
-                style: textStyle,
-              ),
-            )
-          ],
-        ),
-      ),
+          )),
     );
   }
 
