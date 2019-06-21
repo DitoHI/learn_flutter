@@ -2,9 +2,13 @@ import "package:flutter/material.dart";
 
 void main() {
   runApp(MaterialApp(
-    title: "",
-    home: SIForm(),
-  ));
+      title: "Simple Interest App",
+      home: SIForm(),
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          brightness: Brightness.dark,
+          primaryColor: Colors.indigo,
+          accentColor: Colors.indigoAccent)));
 }
 
 class SIForm extends StatefulWidget {
@@ -22,6 +26,9 @@ class _SIFormState extends State<SIForm> {
   @override
   Widget build(BuildContext context) {
     this._currencySelected = this._currencies[0];
+
+    TextStyle textStyle = Theme.of(context).textTheme.title;
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Simple Interest App"),
@@ -36,8 +43,10 @@ class _SIFormState extends State<SIForm> {
                   top: this._minimumPadding, bottom: this._minimumPadding),
               child: TextField(
                 keyboardType: TextInputType.number,
+                style: textStyle,
                 decoration: InputDecoration(
                   labelText: "Principal",
+                  labelStyle: textStyle,
                   hintText: "Enter Principal e.g. 12000",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(this._minimumPadding),
@@ -50,8 +59,10 @@ class _SIFormState extends State<SIForm> {
                   top: this._minimumPadding, bottom: this._minimumPadding),
               child: TextField(
                 keyboardType: TextInputType.number,
+                style: textStyle,
                 decoration: InputDecoration(
                   labelText: "Rate Interest",
+                  labelStyle: textStyle,
                   hintText: "In percent",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(this._minimumPadding),
@@ -67,8 +78,10 @@ class _SIFormState extends State<SIForm> {
                   Expanded(
                     child: TextField(
                       keyboardType: TextInputType.number,
+                      style: textStyle,
                       decoration: InputDecoration(
                         labelText: "Terms",
+                        labelStyle: textStyle,
                         hintText: "In year",
                         border: OutlineInputBorder(
                           borderRadius:
@@ -101,18 +114,33 @@ class _SIFormState extends State<SIForm> {
                 children: <Widget>[
                   Expanded(
                     child: RaisedButton(
-                        child: Text("Calculate"), onPressed: () {}),
+                        color: Theme.of(context).accentColor,
+                        textColor: Theme.of(context).primaryColorDark,
+                        child: Text(
+                          "Calculate",
+                          textScaleFactor: 1.5,
+                        ),
+                        onPressed: () {}),
                   ),
                   Expanded(
                     child: RaisedButton(
-                        child: Text("Reset"), onPressed: () {}),
+                        color: Theme.of(context).primaryColorDark,
+                        textColor: Theme.of(context).primaryColorLight,
+                        child: Text(
+                          "Reset",
+                          textScaleFactor: 1.5,
+                        ),
+                        onPressed: () {}),
                   ),
                 ],
               ),
             ),
             Padding(
               padding: EdgeInsets.all(this._minimumPadding * 2),
-              child: Text("ToDo Text"),
+              child: Text(
+                "ToDo Text",
+                style: textStyle,
+              ),
             )
           ],
         ),
