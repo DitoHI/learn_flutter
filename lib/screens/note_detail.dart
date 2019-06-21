@@ -17,6 +17,7 @@ class NoteDetail extends StatefulWidget {
 }
 
 class NoteDetailState extends State<NoteDetail> {
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   DatabaseHelper dbHelper = DatabaseHelper();
   String appBarTitle;
   Note note;
@@ -48,97 +49,111 @@ class NoteDetailState extends State<NoteDetail> {
                   this._moveToLastScreen();
                 }),
           ),
-          body: Padding(
-            padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
-            child: ListView(
-              children: <Widget>[
-                ListTile(
-                  title: DropdownButton(
-                      items: _priorities.map((priority) {
-                        return DropdownMenuItem<String>(
-                          value: priority,
-                          child: Text(priority),
-                        );
-                      }).toList(),
-                      style: textStyle,
-                      value: this.getPriorityAsString(note.priority),
-                      onChanged: (String prioritySelected) {
-                        setState(() {
-                          this.updatePriorityAsInt(prioritySelected);
-                        });
-                      }),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: titleController,
-                    style: textStyle,
-                    onChanged: (value) {
-                      this.updateTitle();
-                    },
-                    decoration: InputDecoration(
-                        labelText: "Title",
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0))),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: descriptionController,
-                    style: textStyle,
-                    onChanged: (value) {
-                      this.updateDescription();
-                    },
-                    decoration: InputDecoration(
-                        labelText: "Description",
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0))),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: RaisedButton(
-                            color: Theme.of(context).primaryColorDark,
-                            textColor: Theme.of(context).primaryColorLight,
-                            child: Text(
-                              "Save",
-                              textScaleFactor: 1.5,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                this._save();
-                              });
-                            }),
+          body: Form(
+              key: this._formKey,
+              child: Padding(
+                padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
+                child: ListView(
+                  children: <Widget>[
+                    ListTile(
+                      title: DropdownButton(
+                          items: _priorities.map((priority) {
+                            return DropdownMenuItem<String>(
+                              value: priority,
+                              child: Text(priority),
+                            );
+                          }).toList(),
+                          style: textStyle,
+                          value: this.getPriorityAsString(note.priority),
+                          onChanged: (String prioritySelected) {
+                            setState(() {
+                              this.updatePriorityAsInt(prioritySelected);
+                            });
+                          }),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                      child: TextFormField(
+                        controller: titleController,
+                        style: textStyle,
+                        validator: (valueUpdated) {
+                          if (valueUpdated.isEmpty) {
+                            return "Title cannot be empty!";
+                          }
+                        },
+                        decoration: InputDecoration(
+                            labelText: "Title",
+                            labelStyle: textStyle,
+                            errorStyle: TextStyle(
+                                fontSize: 20.0,
+                                color: Theme.of(context).primaryColorDark),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0))),
                       ),
-                      Container(
-                        width: 5.0,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                      child: TextFormField(
+                        controller: descriptionController,
+                        style: textStyle,
+                        validator: (valueUpdated) {
+                          if (valueUpdated.isEmpty) {
+                            return "Description cannot be empty!";
+                          }
+                        },
+                        decoration: InputDecoration(
+                            labelText: "Description",
+                            labelStyle: textStyle,
+                            errorStyle: TextStyle(
+                                fontSize: 20.0,
+                                color: Theme.of(context).primaryColorDark),
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0))),
                       ),
-                      Expanded(
-                        child: RaisedButton(
-                            color: Theme.of(context).primaryColorDark,
-                            textColor: Theme.of(context).primaryColorLight,
-                            child: Text(
-                              "Delete",
-                              textScaleFactor: 1.5,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                this._delete();
-                              });
-                            }),
-                      )
-                    ],
-                  ),
-                )
-              ],
-            ),
-          ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: RaisedButton(
+                                color: Theme.of(context).primaryColorDark,
+                                textColor: Theme.of(context).primaryColorLight,
+                                child: Text(
+                                  "Save",
+                                  textScaleFactor: 1.5,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    if (this._formKey.currentState.validate()) {
+                                      this._save();
+                                    }
+                                  });
+                                }),
+                          ),
+                          Container(
+                            width: 5.0,
+                          ),
+                          Expanded(
+                            child: RaisedButton(
+                                color: Theme.of(context).primaryColorDark,
+                                textColor: Theme.of(context).primaryColorLight,
+                                child: Text(
+                                  "Delete",
+                                  textScaleFactor: 1.5,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    this._delete();
+                                  });
+                                }),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              )),
         ));
   }
 
@@ -183,6 +198,8 @@ class NoteDetailState extends State<NoteDetail> {
   }
 
   void _save() async {
+    this.updateTitle();
+    this.updateDescription();
     note.date = DateFormat.yMMMd().format(DateTime.now());
 
     this._moveToLastScreen();
