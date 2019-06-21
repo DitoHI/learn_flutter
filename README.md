@@ -12,6 +12,7 @@ background of __Java__ and __Kotlin__, but __Flutter__ combined with __Dart__ is
 
 ## Mark Up of Projects
 
+Check out in each `branch` to see the whole projects:
 - Simple Interest Calculator
 - NoteKeeper
 
