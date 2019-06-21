@@ -13,7 +13,7 @@ class DatabaseHelper {
   String colTitle = "title";
   String colDescription = "description";
   String colPriority = "priority";
-  String colDate = "Date";
+  String colDate = "date";
 
   DatabaseHelper._createInstance();
 
@@ -34,7 +34,7 @@ class DatabaseHelper {
 
   Future<Database> initializeDatabase() async {
     Directory dir = await getApplicationDocumentsDirectory();
-    String path = dir.path + 'notes.db';
+    String path = dir.path + 'new_notes.db';
 
     var notesDatabase =
         await openDatabase(path, version: 1, onCreate: this._createDb);
@@ -58,14 +58,15 @@ class DatabaseHelper {
   }
 
 // insert
-  Future<int> _insertNote(Note note) async {
+  Future<int> insertNote(Note note) async {
     Database db = await this.database;
-    int result = await db.insert(noteTable, note.toMap());
+    Map<String, dynamic> noteMap = note.toMap();
+    int result = await db.insert(noteTable, noteMap);
     return result;
   }
 
 // update
-  Future<int> _updateNote(Note note) async {
+  Future<int> updateNote(Note note) async {
     Database db = await this.database;
     int result = await db.update(noteTable, note.toMap(),
         where: '$colId = ?', whereArgs: [note.id]);
@@ -73,7 +74,7 @@ class DatabaseHelper {
   }
 
 // delete
-  Future<int> _deleteNote(int id) async {
+  Future<int> deleteNote(int id) async {
     Database db = await this.database;
     int result =
         await db.rawDelete("DELETE FROM $noteTable WHERE $colId = $id");
@@ -87,5 +88,17 @@ class DatabaseHelper {
         await db.rawQuery("SELECT COUNT (*) from $noteTable");
     int result = Sqflite.firstIntValue(x);
     return result;
+  }
+
+  Future<List<Note>> getNoteList() async {
+    var noteMapList = await this.getNoteMapList();
+    int count = noteMapList.length;
+
+    List<Note> noteList = List<Note>();
+    for(int i = 0; i < count; ++i) {
+      noteList.add(Note.fromMapObject(noteMapList[i]));
+    }
+
+    return noteList;
   }
 }

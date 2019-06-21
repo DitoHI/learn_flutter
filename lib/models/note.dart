@@ -18,6 +18,8 @@ class Note {
 
   int get priority => _priority;
 
+  String get date => _date;
+
   set title(String newTitle) {
     if (newTitle.length <= 255) {
       this._title = newTitle;
@@ -44,12 +46,12 @@ class Note {
 
     var map = Map<String, dynamic>();
     if(id != null) {
-      map['id'] = _id;
+      map['id'] = this._id;
     }
-    map['title'] = _title;
-    map['description'] = _description;
-    map['priority'] = _priority;
-    map['date'] = _date;
+    map['title'] = this._title;
+    map['description'] = this._description;
+    map['priority'] = this._priority;
+    map['date'] = this._date;
 
     return map;
   }
@@ -57,8 +59,8 @@ class Note {
   Note.fromMapObject(Map<String, dynamic> map) {
     this._id = map['id'];
     this._title = map['title'];
-    this.description = map['description'];
-    this.priority = map['priority'];
-    this.date = map['date'];
+    this._description = map['description'];
+    this._priority = map['priority'];
+    this._date = map['date'];
   }
 }

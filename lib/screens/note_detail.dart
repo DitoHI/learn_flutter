@@ -1,38 +1,39 @@
 import "package:flutter/material.dart";
+import "package:learnv2/models/note.dart";
+
+import "package:learnv2/utils/database_helper.dart";
+import 'package:intl/intl.dart';
 
 class NoteDetail extends StatefulWidget {
   final String appBarTitle;
+  final Note note;
 
-  NoteDetail(this.appBarTitle);
+  NoteDetail(this.note, this.appBarTitle);
 
   @override
   State<StatefulWidget> createState() {
-    return NoteDetailState(this.appBarTitle);
+    return NoteDetailState(this.note, this.appBarTitle);
   }
 }
 
 class NoteDetailState extends State<NoteDetail> {
+  DatabaseHelper dbHelper = DatabaseHelper();
   String appBarTitle;
+  Note note;
 
-  NoteDetailState(String title) {
-    this.appBarTitle = title;
-  }
+  NoteDetailState(this.note, this.appBarTitle);
 
-  List<String> _priorities = ["High", "Medium", "Low"];
-  String _prioritySelected = "";
+  static var _priorities = ["High", "Low"];
 
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    this._prioritySelected = this._priorities[0];
-  }
-
-  @override
   Widget build(BuildContext context) {
     var textStyle = Theme.of(context).textTheme.title;
+
+    titleController.text = note.title;
+    descriptionController.text = note.description;
 
     return WillPopScope(
         onWillPop: () {
@@ -53,16 +54,18 @@ class NoteDetailState extends State<NoteDetail> {
               children: <Widget>[
                 ListTile(
                   title: DropdownButton(
-                      items: this._priorities.map((priority) {
+                      items: _priorities.map((priority) {
                         return DropdownMenuItem<String>(
                           value: priority,
                           child: Text(priority),
                         );
                       }).toList(),
                       style: textStyle,
-                      value: this._prioritySelected,
+                      value: this.getPriorityAsString(note.priority),
                       onChanged: (String prioritySelected) {
-                        this._onDropdownPrioritySelected(prioritySelected);
+                        setState(() {
+                          this.updatePriorityAsInt(prioritySelected);
+                        });
                       }),
                 ),
                 Padding(
@@ -71,7 +74,7 @@ class NoteDetailState extends State<NoteDetail> {
                     controller: titleController,
                     style: textStyle,
                     onChanged: (value) {
-                      debugPrint("$value in Title TextField");
+                      this.updateTitle();
                     },
                     decoration: InputDecoration(
                         labelText: "Title",
@@ -86,7 +89,7 @@ class NoteDetailState extends State<NoteDetail> {
                     controller: descriptionController,
                     style: textStyle,
                     onChanged: (value) {
-                      debugPrint("$value in Description TextField");
+                      this.updateDescription();
                     },
                     decoration: InputDecoration(
                         labelText: "Description",
@@ -109,7 +112,7 @@ class NoteDetailState extends State<NoteDetail> {
                             ),
                             onPressed: () {
                               setState(() {
-                                debugPrint("Save button clicked");
+                                this._save();
                               });
                             }),
                       ),
@@ -126,7 +129,7 @@ class NoteDetailState extends State<NoteDetail> {
                             ),
                             onPressed: () {
                               setState(() {
-                                debugPrint("Delete button clicked");
+                                this._delete();
                               });
                             }),
                       )
@@ -139,13 +142,86 @@ class NoteDetailState extends State<NoteDetail> {
         ));
   }
 
-  void _onDropdownPrioritySelected(String prioritySelected) {
-    setState(() {
-      this._prioritySelected = prioritySelected;
-    });
+  void _moveToLastScreen() {
+    Navigator.pop(context, true);
   }
 
-  void _moveToLastScreen() {
-    Navigator.pop(context);
+  void updatePriorityAsInt(String value) {
+    switch (value) {
+      case 'High':
+        this.note.priority = 1;
+        break;
+      case 'Low':
+        this.note.priority = 2;
+        break;
+      default:
+        break;
+    }
+  }
+
+  String getPriorityAsString(int value) {
+    String priority;
+    switch (value) {
+      case 1:
+        priority = _priorities[0];
+        break;
+      case 2:
+        priority = _priorities[1];
+        break;
+      default:
+        break;
+    }
+    return priority;
+  }
+
+  void updateTitle() {
+    note.title = titleController.text;
+  }
+
+  void updateDescription() {
+    note.description = descriptionController.text;
+  }
+
+  void _save() async {
+    note.date = DateFormat.yMMMd().format(DateTime.now());
+
+    this._moveToLastScreen();
+
+    int result;
+    if (note.id != null) {
+      result = await dbHelper.updateNote(note);
+    } else {
+      result = await dbHelper.insertNote(note);
+    }
+
+    if (result != 0) {
+      this._showAlertDialog("Note Saved Successfully");
+    } else {
+      this._showAlertDialog("Problem Saving Note");
+    }
+  }
+
+  void _delete() async {
+    this._moveToLastScreen();
+
+    if (note.id == null) {
+      this._showAlertDialog("No Note was deleted");
+      return;
+    }
+
+    int result = await this.dbHelper.deleteNote(note.id);
+    if (result != 0) {
+      this._showAlertDialog("Note Deleted Successfully");
+    } else {
+      this._showAlertDialog("Problem Deleting Note");
+    }
+  }
+
+  void _showAlertDialog(String message) {
+    AlertDialog alertDialog = AlertDialog(
+      title: Text("Status"),
+      content: Text(message),
+    );
+    showDialog(context: context, builder: (_) => alertDialog);
   }
 }
