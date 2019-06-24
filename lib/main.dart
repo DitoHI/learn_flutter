@@ -1,69 +1,86 @@
 import 'package:flutter/material.dart';
+import "package:provider/provider.dart";
 
-void main() {
-  runApp(MaterialApp(
-    title: "Stateful App Example",
-    home: FavoriteCity(),
-  ));
-}
+import 'package:learnv2/weather_info.dart';
 
-class FavoriteCity extends StatefulWidget {
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
   @override
-  State<StatefulWidget> createState() {
-    return _FavoriteCityState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: "Flutter Provider Demo",
+      theme: ThemeData(
+        primarySwatch: Colors.deepOrange,
+      ),
+      home: MyHomePage(),
+    );
   }
 }
 
-class _FavoriteCityState extends State<FavoriteCity> {
-  String nameCity = "";
-  var _currencies = ["rupees", "dollar", "yuan"];
-  String __currentSelected = "dollar";
-
+class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Stateful Example"),
-      ),
-      body: Container(
-        margin: EdgeInsets.all(20.0),
-        child: Column(
-          children: <Widget>[
-            DropdownButton<String>(
-              items: _currencies.map((currency) {
-                return DropdownMenuItem<String>(
-                  value: currency,
-                  child: Text(currency),
-                );
-              }).toList(),
-              onChanged: (String newValueSelected) {
-                this._onDropdownSelected(newValueSelected);
-              },
-              value: this.__currentSelected,
-            ),
-            TextField(
-              onSubmitted: (String userInput) {
-                setState(() {
-                  this.nameCity = userInput;
-                });
-              },
-            ),
-            Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                "The best city is $nameCity",
-                style: TextStyle(fontSize: 20.0),
-              ),
-            )
-          ],
+    return ChangeNotifierProvider(
+      builder: (context) => WeatherInfo(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("Provider Pattern"),
         ),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              MySpecialHeading(),
+              MySpecialContent(),
+            ],
+          ),
+        ),
+        floatingActionButton: MyFlotingActionButton(),
       ),
     );
   }
+}
 
-  void _onDropdownSelected(String valueSelected) {
-    setState(() {
-      this.__currentSelected = valueSelected;
-    });
+class MySpecialHeading extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<WeatherInfo>(
+      builder: (context, weatherInfo, _) => Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              weatherInfo.temperatureType,
+              style: TextStyle(color: _decideColor(weatherInfo), fontSize: 25.0),
+            ),
+          ),
+    );
   }
+}
+
+class MySpecialContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(padding: const EdgeInsets.all(8.0), child: Text("Temperature Value"));
+  }
+}
+
+class MyFlotingActionButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    WeatherInfo weatherInfo = Provider.of<WeatherInfo>(context);
+
+    return FloatingActionButton(
+      backgroundColor: _decideColor(weatherInfo),
+      onPressed: () {
+        String weatherType = weatherInfo.temperatureType == "celcius" ? "far" : "celcius";
+        weatherInfo.temperatureType = weatherType;
+      },
+      tooltip: 'Change Type',
+      child: Icon(Icons.chat),
+    );
+  }
+}
+
+Color _decideColor(WeatherInfo info) {
+  return info.temperatureType == "celcius" ? Colors.green : Colors.deepOrange;
 }
