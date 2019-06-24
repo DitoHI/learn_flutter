@@ -15,6 +15,7 @@ background of __Java__ and __Kotlin__, but __Flutter__ combined with __Dart__ is
 Check out in each `branch` to see the whole projects:
 - Simple Interest Calculator
 - NoteKeeper
+- State Management with Provider (source: [here](https://www.youtube.com/watch?v=xcSG-qddbCM&t=555s))
 
 ## Screenshots
 
@@ -37,6 +38,12 @@ Check out in each `branch` to see the whole projects:
 <img src="https://user-images.githubusercontent.com/16315641/59941513-8edf3780-9487-11e9-8525-e31a9fa27342.png" width="200" height="100%"/>
 
 <img src="https://user-images.githubusercontent.com/16315641/59941515-90106480-9487-11e9-8361-343c6c487847.png" width="200" height="100%"/>
+
+##### 3. State Management with Provider
+
+<img src="https://user-images.githubusercontent.com/16315641/60028084-e9b3a180-96c8-11e9-923c-7c4b3b8e5111.png" width="200" height="100%"/>
+
+<img src="https://user-images.githubusercontent.com/16315641/60028081-e8827480-96c8-11e9-8461-6c09a8b71d11.png" width="200" height="100%"/>
 
 </div>
 
